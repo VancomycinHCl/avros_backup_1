@@ -56,3 +56,9 @@ void  init_memory_heap(void)
     first_memory_block_ptr_inheap->next_memory_block_ptr = end_memory_block_ptr_inheap;
     first_memory_block_ptr_inheap->size_memory_block     = available_memory_size;
 }
+
+
+void* malloc_memory(size_t block_length)
+{
+    return NULL;
+}
