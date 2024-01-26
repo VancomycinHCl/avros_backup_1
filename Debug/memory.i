@@ -1,5 +1,0 @@
-# 1 ".././memory.c"
-# 1 "C:\\Users\\Adin\\Documents\\Atmel Studio\\7.0\\2024_avros_ver0\\2024_avros_ver0\\Debug//"
-# 1 "<built-in>"
-# 1 "<command-line>"
-# 1 ".././memory.c"

@@ -26,11 +26,6 @@ struct BLOCK_MEMORY_HEAD{
 
 #define GLOBAL_HEAP_SIZE 1024*4
 
-/**
- * @brief 堆空间的声明
- * 
- */
-static uint8_t heap_memory[GLOBAL_HEAP_SIZE];
 
 /**																	
 	* @brief		初始化堆空间，设置初始内存块与末尾内存块，计算padding字节
