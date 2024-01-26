@@ -19,7 +19,7 @@ static uint32_t history_available_min_memory_size = GLOBAL_HEAP_SIZE;
 
 static block_memory_head start_memory_block;
 
-void  init_memory_heap(void)
+void init_memory_heap(void)
 {
     uint8_t* actual_heap_memory = NULL;
     uint8_t* actual_heap_memory_end = NULL;
@@ -55,4 +55,10 @@ void  init_memory_heap(void)
     first_memory_block_ptr_inheap = actual_heap_memory;
     first_memory_block_ptr_inheap->next_memory_block_ptr = end_memory_block_ptr_inheap;
     first_memory_block_ptr_inheap->size_memory_block     = available_memory_size;
+}
+
+
+void* malloc_memory(size_t block_length)
+{
+    return NULL;
 }
