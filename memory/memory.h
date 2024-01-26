@@ -18,13 +18,42 @@
  * @brief 
  * 
  */
-struct BLOCK_MEMORY_HEAD{
-	BLOCK_MEMORY_HEAD* next_memory_block_ptr; /**/
+typedef struct BLOCK_MEMORY_HEAD
+{
+	block_memory_head* next_memory_block_ptr; 
 	unsigned int  size_memory_block;
 }block_memory_head;
 
 
 #define GLOBAL_HEAP_SIZE 1024*4
+
+#ifndef BITS_PER_BYTE
+#define BITS_PER_BYTE 8
+#endif
+
+#define BYTES_ALIGNMENT_FOR_MCU 1
+
+#if 	BYTES_ALIGNMENT_FOR_MCU == 1
+#define BYTES_ALIGNMENT_MASK_FOR_MCU 0x0000
+#elif 	BYTES_ALIGNMENT_FOR_MCU == 4
+#define BYTES_ALIGNMENT_MASK_FOR_MCU 0x0007
+#elif 	BYTES_ALIGNMENT_FOR_MCU == 8
+#define BYTES_ALIGNMENT_MASK_FOR_MCU 0x000F
+#endif
+
+#if 	BYTES_ALIGNMENT_FOR_MCU == 1
+#define SIZEOF_BLOCK_MEMORY_HEAD_WITH_ALIGNMENT sizeof(block_memory_head)
+#endif
+
+#define BLOCK_MEMORY_ALLOCATED_MASK ( 1 << (sizeof(unsigned int) * BITS_PER_BYTE - 1) )
+#define IS_BLOCK_MEMORY_ALLOCATED(block_memory_head_ptr)  (((block_memory_head_ptr->size_memory_block) & \
+															BLOCK_MEMORY_ALLOCATED_MASK) != 0)
+#define IS_BLOCK_MEMORY_SIZE_VALID(block_memory_size) ( (block_memory_size & BLOCK_MEMORY_ALLOCATED_MASK) == 0)
+
+#define BLOCK_MEMORY_ALLOCATE(block_memory_head_ptr) ( ( (block_memory_head_ptr->size_memory_block) |= \
+															BLOCK_MEMORY_ALLOCATED_MASK) )
+#define BLOCK_MEMORY_FREE(block_memory_head_ptr) ( ( (block_memory_head_ptr->size_memory_block) &= \
+															~BLOCK_MEMORY_ALLOCATED_MASK) )
 
 
 /**																	

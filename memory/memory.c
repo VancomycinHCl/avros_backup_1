@@ -7,9 +7,11 @@
 * @version	    v1.0
 */
 
+#include "memory.h"
 
 /**
  * @brief 堆空间的声明，在bss段且只有该源文件有直接操作内存的接口
  * 
  */
 static uint8_t heap_memory[GLOBAL_HEAP_SIZE];
+
