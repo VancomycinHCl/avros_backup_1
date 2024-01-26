@@ -1,9 +1,12 @@
-/*
- * 2024_avros_ver0.c
- *
- * Created: 11/01/2024 11.47.50
- * Author : Adin
- */ 
+/**
+* @file        main.c
+* @brief		This is a brief description.
+* @details	    This is the detail description.
+* @author		Xuanzhi Liu
+* @date		2024/01/26 11:59:18
+* @version	    v1.0
+*/
+
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include "avr/iom2560.h"

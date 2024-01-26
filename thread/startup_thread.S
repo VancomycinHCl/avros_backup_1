@@ -20,14 +20,14 @@
 .equ TLB_SIZE,0x04
 
 startup_thread:
- 	lds r16, currentThread       ; ¼ÓÔØ currentThread µÄÖµµ½ r16
-    ldi r17, TLB_SIZE            ; ¼ÓÔØ TCB µÄ´óĞ¡µ½ r17 (4 ×Ö½Ú)
-    mul r16, r17                 ; r0:r1 = r16 * r17 (½á¹ûÔÚ r0:r1)
-    ldi r30, lo8(threadList)     ; ¼ÓÔØ threadList µÄµÍÎ»µØÖ·µ½ Z ¼Ä´æÆ÷ (r30)
-    ldi r31, hi8(threadList)     ; ¼ÓÔØ threadList µÄ¸ßÎ»µØÖ·µ½ Z ¼Ä´æÆ÷ (r31)
-    add r30, r0                  ; ½«³Ë·¨½á¹ûµÄµÍÎ»¼Óµ½ Z ¼Ä´æÆ÷µÄµÍÎ»
-    adc r31, r1                  ; ½«³Ë·¨½á¹ûµÄ¸ßÎ»¼Óµ½ Z ¼Ä´æÆ÷µÄ¸ßÎ»£¬¿¼ÂÇ½øÎ»
-    clr r1                       ; Çå³ı r1£¬ÒòÎª mul Ö¸Áî»áÊ¹ÓÃµ½Ëü
+ 	lds r16, currentThread       ; åŠ è½½ currentThread çš„å€¼åˆ° r16
+    ldi r17, TLB_SIZE            ; åŠ è½½ TCB çš„å¤§å°åˆ° r17 (4 å­—èŠ‚)
+    mul r16, r17                 ; r0:r1 = r16 * r17 (ç»“æœåœ¨ r0:r1)
+    ldi r30, lo8(threadList)     ; åŠ è½½ threadList çš„ä½ä½åœ°å€åˆ° Z å¯„å­˜å™¨ (r30)
+    ldi r31, hi8(threadList)     ; åŠ è½½ threadList çš„é«˜ä½åœ°å€åˆ° Z å¯„å­˜å™¨ (r31)
+    add r30, r0                  ; å°†ä¹˜æ³•ç»“æœçš„ä½ä½åŠ åˆ° Z å¯„å­˜å™¨çš„ä½ä½
+    adc r31, r1                  ; å°†ä¹˜æ³•ç»“æœçš„é«˜ä½åŠ åˆ° Z å¯„å­˜å™¨çš„é«˜ä½ï¼Œè€ƒè™‘è¿›ä½
+    clr r1                       ; æ¸…é™¤ r1ï¼Œå› ä¸º mul æŒ‡ä»¤ä¼šä½¿ç”¨åˆ°å®ƒ
 	ld  r16, Z+
 	ld  r17, Z
     out SPL, r16
@@ -64,10 +64,10 @@ startup_thread:
 	pop r3 
 	pop r2 
 	pop r1 
-    ; ... »Ö¸´ÆäËû¼Ä´æÆ÷ ...
+    ; ... æ¢å¤å…¶ä»–å¯„å­˜å™¨ ...
     pop r0
     out SREG, r0
     pop r0
-	sei;    »Ö¸´ÖĞ¶ÏÊ¹ÄÜ
-    ; ... »Ö¸´ÆäËû¼Ä´æÆ÷ ...
+	sei;    æ¢å¤ä¸­æ–­ä½¿èƒ½
+    ; ... æ¢å¤å…¶ä»–å¯„å­˜å™¨ ...
     ret

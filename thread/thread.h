@@ -1,7 +1,7 @@
-/*
+ï»¿/*
  * thread.h
- * Description: Ïß³ÌµÄ´´½¨Óëµ÷¶È£¬Ä¿Ç°ÒÑ¾­Íê³ÉÏß³ÌµÄÇĞ»»£¬µ÷¶ÈËã·¨ÊÇË³ĞòÂÖÑ¯
- * ToDo : Íê³ÉÏß³Ì×´Ì¬ÇĞ»»/ÓÅÏÈ¼¶µ÷¶È£¬×´Ì¬ÇĞ»»ÒÔÊµÏÖdelayÕâÑùµÄ¹ÒÆğÂß¼­ÎªÖ÷
+ * Description: çº¿ç¨‹çš„åˆ›å»ºä¸è°ƒåº¦ï¼Œç›®å‰å·²ç»å®Œæˆçº¿ç¨‹çš„åˆ‡æ¢ï¼Œè°ƒåº¦ç®—æ³•æ˜¯é¡ºåºè½®è¯¢
+ * ToDo : å®Œæˆçº¿ç¨‹çŠ¶æ€åˆ‡æ¢/ä¼˜å…ˆçº§è°ƒåº¦ï¼ŒçŠ¶æ€åˆ‡æ¢ä»¥å®ç°delayè¿™æ ·çš„æŒ‚èµ·é€»è¾‘ä¸ºä¸»
  * Created: 11/01/2024 12.30.37
  *  Author: Adin
  */ 
@@ -16,8 +16,8 @@
 #include <avr/delay.h>
 
 //typedef struct {
-	//uint8_t* stackPointer; // Ö¸ÏòÏß³ÌÕ»¶¥µÄÖ¸Õë
-	//uint8_t* stack_bottom_Pointer; // Ö¸ÏòÏß³ÌÕ»µ×µÄÖ¸Õë £¨Áô×Å±¸ÓÃ£©
+	//uint8_t* stackPointer; // æŒ‡å‘çº¿ç¨‹æ ˆé¡¶çš„æŒ‡é’ˆ
+	//uint8_t* stack_bottom_Pointer; // æŒ‡å‘çº¿ç¨‹æ ˆåº•çš„æŒ‡é’ˆ ï¼ˆç•™ç€å¤‡ç”¨ï¼‰
 //} TCB;
 
 typedef enum {
@@ -29,11 +29,11 @@ typedef enum {
 } TCB_STATUS;
 
 typedef struct {
-	uint8_t*	 tcb_stackPointer;			// Ö¸ÏòÏß³ÌÕ»¶¥µÄÖ¸Õë
-	uint8_t*	 tcb_stack_bottom_Pointer;	// Ö¸ÏòÏß³ÌÕ»µ×µÄÖ¸Õë £¨Áô×Å±¸ÓÃ£©
-	uint8_t		 tcb_pid;					// Ïß³ÌPID
-	TCB_STATUS   tcb_status;				// Ïß³Ì×´Ì¬£¨¾ÍĞ÷¡¢ÔËĞĞ¡¢delay¹ÒÆğ¡¢IO×èÈû¡¢¿Õ£©
-	// uint16_t	 tcb_stack_usage;			// Õ»¿Õ¼äÊ¹ÓÃÇé¿ö£¬·ÀÖ¹±¬Õ»
+	uint8_t*	 tcb_stackPointer;			// æŒ‡å‘çº¿ç¨‹æ ˆé¡¶çš„æŒ‡é’ˆ
+	uint8_t*	 tcb_stack_bottom_Pointer;	// æŒ‡å‘çº¿ç¨‹æ ˆåº•çš„æŒ‡é’ˆ ï¼ˆç•™ç€å¤‡ç”¨ï¼‰
+	uint8_t		 tcb_pid;					// çº¿ç¨‹PID
+	TCB_STATUS   tcb_status;				// çº¿ç¨‹çŠ¶æ€ï¼ˆå°±ç»ªã€è¿è¡Œã€delayæŒ‚èµ·ã€IOé˜»å¡ã€ç©ºï¼‰
+	// uint16_t	 tcb_stack_usage;			// æ ˆç©ºé—´ä½¿ç”¨æƒ…å†µï¼Œé˜²æ­¢çˆ†æ ˆ
 	uint16_t     tcb_delay_cyc_cnt;
 } TCB;
 
@@ -59,7 +59,7 @@ typedef struct {
 #define STACK_INIT_DATA 0x83
 
 extern int currentThread;
-extern TCB threadList[MAX_THREADS]; // Ïß³ÌÁĞ±í
+extern TCB threadList[MAX_THREADS]; // çº¿ç¨‹åˆ—è¡¨
 
 #define STACK_SIZE 512
 uint8_t thread_stack_0[STACK_SIZE];
@@ -74,5 +74,10 @@ extern void scheduling_thread(void);
 extern void delay_us(uint16_t delay_interval_us);
 extern void delay_us_atom(uint16_t delay_interval_us);
 void delay_thread_ms(int delay_interval_ms);
+
+
+// need to complete
+// void suspend_threads_all(void);
+// void resume_threads_all(void);
 
 #endif /* THREAD_H_ */

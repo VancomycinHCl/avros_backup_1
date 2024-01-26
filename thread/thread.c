@@ -1,4 +1,4 @@
-/*
+ï»¿/*
  * thread.c
  *
  * Created: 11/01/2024 12.30.23
@@ -12,10 +12,10 @@
 
 void setup_threads(TCB* tcb_ptr, uint8_t* stack_bottom_ptr,void* thread_function, int thread_pid)
 {
-	// ÏÈ·âÕ»µ×£¬Õ»µ×£¨Ò²¾ÍÊÇ¿ÕÕ»Õ»¶¥£©ÊÇPCÖ¸ÕëµÄÎ»ÖÃ£¬¼´Ïß³Ìº¯ÊýµÄÖ¸Õë
-	// ATMELµÄ¼Ü¹¹ÊÇ´ÓÒ»°ã×´Ì¬½øÈëÖÐ¶ÏÊ±ÏÈ°ÑÊÖÍ·Ö´ÐÐµÄº¯ÊýÖ¸Õëpush½øÕ»¶¥
-	// ÖÐ¶Ïº¯ÊýÖ´ÐÐÍê±ÏºóÔÙ°ÑÕ»µ×µÄº¯ÊýÖ¸Õëpop³öÕ»¶¥
-	// Õû¸ö¹ý³ÌÊÇÓ²¼þ×Ô¶¯Ö´ÐÐµÄ
+	// å…ˆå°æ ˆåº•ï¼Œæ ˆåº•ï¼ˆä¹Ÿå°±æ˜¯ç©ºæ ˆæ ˆé¡¶ï¼‰æ˜¯PCæŒ‡é’ˆçš„ä½ç½®ï¼Œå³çº¿ç¨‹å‡½æ•°çš„æŒ‡é’ˆ
+	// ATMELçš„æž¶æž„æ˜¯ä»Žä¸€èˆ¬çŠ¶æ€è¿›å…¥ä¸­æ–­æ—¶å…ˆæŠŠæ‰‹å¤´æ‰§è¡Œçš„å‡½æ•°æŒ‡é’ˆpushè¿›æ ˆé¡¶
+	// ä¸­æ–­å‡½æ•°æ‰§è¡Œå®Œæ¯•åŽå†æŠŠæ ˆåº•çš„å‡½æ•°æŒ‡é’ˆpopå‡ºæ ˆé¡¶
+	// æ•´ä¸ªè¿‡ç¨‹æ˜¯ç¡¬ä»¶è‡ªåŠ¨æ‰§è¡Œçš„
 	uint8_t* stack_top_ptr = stack_bottom_ptr + STACK_SIZE - 1;
 	memset(stack_bottom_ptr,STACK_INIT_DATA,STACK_SIZE);
 	*stack_top_ptr     = 0x00;
@@ -26,17 +26,17 @@ void setup_threads(TCB* tcb_ptr, uint8_t* stack_bottom_ptr,void* thread_function
 	*(stack_top_ptr-1) = (uint16_t) thread_function >> 0x08;
 	*(stack_top_ptr-2) = 0x00;
 	stack_top_ptr -= 3;
-	// È»ºó³õÊ¼»¯¸÷¸ö¼Ä´æÆ÷£¬Í¨ÓÃ¼Ä´æÆ÷32bytes£¬×´Ì¬¼Ä´æÆ÷1byte£¬PC¼Ä´æÆ÷2byte£¬¹²35bytes
-	// Ö»ÐèÒª¸²Ð´33¸ö¼Ä´æÆ÷¼´¿É
+	// ç„¶åŽåˆå§‹åŒ–å„ä¸ªå¯„å­˜å™¨ï¼Œé€šç”¨å¯„å­˜å™¨32bytesï¼ŒçŠ¶æ€å¯„å­˜å™¨1byteï¼ŒPCå¯„å­˜å™¨2byteï¼Œå…±35bytes
+	// åªéœ€è¦è¦†å†™33ä¸ªå¯„å­˜å™¨å³å¯
 	memset(stack_top_ptr-33,0x00,33);
-	// È»ºó°Ñµ±Ç°Õ»¶¥´æµ½TCBÀï
+	// ç„¶åŽæŠŠå½“å‰æ ˆé¡¶å­˜åˆ°TCBé‡Œ
 	tcb_ptr->tcb_stackPointer  = stack_top_ptr - 33;
 	tcb_ptr->tcb_status        = TCB_STATUS_REDAY;
 	tcb_ptr->tcb_pid		   = thread_pid;
 	tcb_ptr->tcb_delay_cyc_cnt = 0;
 }
 
-TCB threadList[MAX_THREADS]; // Ïß³ÌÁÐ±í
+TCB threadList[MAX_THREADS]; // çº¿ç¨‹åˆ—è¡¨
 int currentThread=0;
 
 #if THREAD_SCHEDULING_ROUND_ROBIN 
