@@ -13,6 +13,8 @@
 #define MEMORY_H
 
 #include <stdint.h>
+#include <stddef.h>
+#include <string.h>
 
 /**
  * @brief 
@@ -29,6 +31,14 @@ typedef struct BLOCK_MEMORY_HEAD
 
 #ifndef BITS_PER_BYTE
 #define BITS_PER_BYTE 8
+#endif // end BITS_PER_BYTE
+
+#ifndef HEAP_INIT_DATA
+#define HEAP_INIT_DATA 0xDD
+#endif // HEAP_INIT_DATA
+
+#ifndef MIN
+#define MIN(A,B) A<B? A:B
 #endif
 
 #define BYTES_ALIGNMENT_FOR_MCU 1
@@ -68,7 +78,7 @@ void  init_memory_heap(void);
 /**																	
 	* @brief		分配堆空间
 	* @details	    在堆空间内寻找第一个可用内存块，并尝试进行前向合并与后向合并
-	* @note 		切记，不要倒着写这块内存，即a[-1]的形式，这样会毁掉这段内存空间的
+	* @note 		切记，不要倒着写这块内存，即a[-1]的形式，这样会毁掉这段内存块的
 	* @param[in]	block_length 所需内存字节数
 	* @return 		返回被分配的空间的可用地址指针
 	* @retval		void* !NULL		分配成功
