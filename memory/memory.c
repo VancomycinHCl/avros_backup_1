@@ -19,7 +19,7 @@ static uint32_t history_available_min_memory_size = GLOBAL_HEAP_SIZE;
 
 static block_memory_head start_memory_block;
 
-void  init_memory_heap(void)
+void init_memory_heap(void)
 {
     uint8_t* actual_heap_memory = NULL;
     uint8_t* actual_heap_memory_end = NULL;
