@@ -15,6 +15,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <string.h>
+#include <assert.h>
 
 /**
  * @brief 
@@ -23,7 +24,7 @@
 typedef struct BLOCK_MEMORY_HEAD
 {
 	block_memory_head* next_memory_block_ptr; 
-	unsigned int  size_memory_block;
+	unsigned int  size_memory_block;  // 16'h8000 -> size_memory_block[15] = 1 if allocated else 0
 }block_memory_head;
 
 
@@ -34,7 +35,7 @@ typedef struct BLOCK_MEMORY_HEAD
 #endif // end BITS_PER_BYTE
 
 #ifndef HEAP_INIT_DATA
-#define HEAP_INIT_DATA 0xDD
+#define HEAP_INIT_DATA 0xCD
 #endif // HEAP_INIT_DATA
 
 #ifndef MIN
@@ -46,9 +47,9 @@ typedef struct BLOCK_MEMORY_HEAD
 #if 	BYTES_ALIGNMENT_FOR_MCU == 1
 #define BYTES_ALIGNMENT_MASK_FOR_MCU 0x0000
 #elif 	BYTES_ALIGNMENT_FOR_MCU == 4
-#define BYTES_ALIGNMENT_MASK_FOR_MCU 0x0007
+#define BYTES_ALIGNMENT_MASK_FOR_MCU 0x0003
 #elif 	BYTES_ALIGNMENT_FOR_MCU == 8
-#define BYTES_ALIGNMENT_MASK_FOR_MCU 0x000F
+#define BYTES_ALIGNMENT_MASK_FOR_MCU 0x0007
 #endif
 
 #if 	BYTES_ALIGNMENT_FOR_MCU == 1

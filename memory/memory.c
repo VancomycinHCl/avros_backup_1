@@ -21,10 +21,13 @@ static block_memory_head start_memory_block;
 
 void init_memory_heap(void)
 {
-    uint8_t* actual_heap_memory = NULL;
+    uint8_t* actual_heap_memory = NULL; 
     uint8_t* actual_heap_memory_end = NULL;
     block_memory_head* first_memory_block_ptr_inheap;
     block_memory_head* end_memory_block_ptr_inheap;
+
+// 1. first(end,total-size) 2. end(null,0)
+
 
     #if BYTES_ALIGNMENT_FOR_MCU == 1
     actual_heap_memory = heap_memory;
@@ -38,9 +41,11 @@ void init_memory_heap(void)
         ///<! 这里需要插入按照多字节对齐的逻辑，但是我还没看懂
     }
     #endif
+    #ifdef DEBUG
     memset(actual_heap_memory, HEAP_INIT_DATA, available_memory_size);
+    #endif
 
-    start_memory_block.next_memory_block_ptr = end_memory_block_ptr_inheap;
+    start_memory_block.next_memory_block_ptr = actual_heap_memory;
     start_memory_block.size_memory_block     = end_memory_block_ptr_inheap - \
                                                actual_heap_memory;
 
@@ -60,5 +65,36 @@ void init_memory_heap(void)
 
 void* malloc_memory(size_t block_length)
 {
+    #if BYTES_ALIGNMENT_FOR_MCU == 1
+
+    uint8_t* actual_heap_memory = heap_memory;
+    block_memory_head* current_memory_block = NULL;
+
+    if (IS_BLOCK_MEMORY_SIZE_VALID(block_length) == 0)
+    {
+        return NULL;
+    }
+    
+    if (start_memory_block.next_memory_block_ptr != actual_heap_memory)
+        init_memory_heap();
+    
+    current_memory_block = start_memory_block.next_memory_block_ptr;
+    
+    while (current_memory_block->next_memory_block_ptr != NULL)
+    {
+        if (block_length <= current_memory_block->size_memory_block)
+        {
+            break;
+        }
+        else
+        {
+            current_memory_block = current_memory_block->next_memory_block_ptr;
+        }
+    }
+    
+    #endif
+    
+
+
     return NULL;
 }

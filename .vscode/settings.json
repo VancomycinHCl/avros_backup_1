@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "thread.h": "c",
-        "delay.h": "c"
+        "delay.h": "c",
+        "assert.h": "c"
     }
 }

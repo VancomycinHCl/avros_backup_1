@@ -1,4 +1,4 @@
-
+ï»¿
 /*
  * switch_threads.S
  *
@@ -22,17 +22,17 @@
 .equ SPL,0x3D
 .equ MAX_THREADS,2
 .equ SREG,0x3F
-.equ TLB_SIZE,0x08
+.equ TLB_SIZE,0x10
 
 switch_threads:
 	rjmp save_prev_thread
 save_prev_thread:
-    ; ±£´æµ±Ç°Ïß³ÌµÄÕ»Ö¸Õë
+    ; ä¿å­˜å½“å‰çº¿ç¨‹çš„æ ˆæŒ‡é’ˆ
 	cli
     push r0
     in r0, SREG
     push r0
-    ; ... ±£´æÆäËû¼Ä´æÆ÷ ...
+    ; ... ä¿å­˜å…¶ä»–å¯„å­˜å™¨ ...
 	push r1
 	push r2
 	push r3
@@ -65,16 +65,16 @@ save_prev_thread:
 	push r30
 	push r31
 
-    ; ±£´æµ±Ç°Õ»Ö¸Õëµ½ threadList[currentThread].stackPointer
-	lds r16, currentThread   ; ¼ÓÔØ currentThread µÄÖµµ½ r16
-	ldi r17, TLB_SIZE		 ; ¼ÓÔØ TCB µÄ´óĞ¡µ½ r17 (4 ×Ö½Ú)
-	mul r16, r17			 ; r0:r1 = r16 * r17 (½á¹ûÔÚ r0:r1)
+    ; ä¿å­˜å½“å‰æ ˆæŒ‡é’ˆåˆ° threadList[currentThread].stackPointer
+	lds r16, currentThread   ; åŠ è½½ currentThread çš„å€¼åˆ° r16
+	ldi r17, TLB_SIZE		 ; åŠ è½½ TCB çš„å¤§å°åˆ° r17 (4 å­—èŠ‚)
+	mul r16, r17			 ; r0:r1 = r16 * r17 (ç»“æœåœ¨ r0:r1)
 	in r18, SPL
 	in r19, SPH
-	ldi r30, lo8(threadList) ; ¼ÓÔØ threadList µÄµÍÎ»µØÖ·µ½ Z ¼Ä´æÆ÷ (r30)
-	ldi r31, hi8(threadList) ; ¼ÓÔØ threadList µÄ¸ßÎ»µØÖ·µ½ Z ¼Ä´æÆ÷ (r31)
-	add r30, r0				 ; ½«³Ë·¨½á¹ûµÄµÍÎ»¼Óµ½ Z ¼Ä´æÆ÷µÄµÍÎ»
-	adc r31, r1				 ; ½«³Ë·¨½á¹ûµÄ¸ßÎ»¼Óµ½ Z ¼Ä´æÆ÷µÄ¸ßÎ»£¬¿¼ÂÇ½øÎ»
+	ldi r30, lo8(threadList) ; åŠ è½½ threadList çš„ä½ä½åœ°å€åˆ° Z å¯„å­˜å™¨ (r30)
+	ldi r31, hi8(threadList) ; åŠ è½½ threadList çš„é«˜ä½åœ°å€åˆ° Z å¯„å­˜å™¨ (r31)
+	add r30, r0				 ; å°†ä¹˜æ³•ç»“æœçš„ä½ä½åŠ åˆ° Z å¯„å­˜å™¨çš„ä½ä½
+	adc r31, r1				 ; å°†ä¹˜æ³•ç»“æœçš„é«˜ä½åŠ åˆ° Z å¯„å­˜å™¨çš„é«˜ä½ï¼Œè€ƒè™‘è¿›ä½
 	st Z+, r18
 	st Z+, r19
 
@@ -82,15 +82,15 @@ save_prev_thread:
 	rcall scheduling_thread  ;
 
 restore_next_thread:
-    ; »Ö¸´ÏÂÒ»¸öÏß³ÌµÄÕ»Ö¸Õë
-	lds r16, currentThread       ; ¼ÓÔØ currentThread µÄÖµµ½ r16
-    ldi r17, TLB_SIZE            ; ¼ÓÔØ TCB µÄ´óĞ¡µ½ r17 (4 ×Ö½Ú)
-    mul r16, r17                 ; r0:r1 = r16 * r17 (½á¹ûÔÚ r0:r1)
-    ldi r30, lo8(threadList)     ; ¼ÓÔØ threadList µÄµÍÎ»µØÖ·µ½ Z ¼Ä´æÆ÷ (r30)
-    ldi r31, hi8(threadList)     ; ¼ÓÔØ threadList µÄ¸ßÎ»µØÖ·µ½ Z ¼Ä´æÆ÷ (r31)
-    add r30, r0                  ; ½«³Ë·¨½á¹ûµÄµÍÎ»¼Óµ½ Z ¼Ä´æÆ÷µÄµÍÎ»
-    adc r31, r1                  ; ½«³Ë·¨½á¹ûµÄ¸ßÎ»¼Óµ½ Z ¼Ä´æÆ÷µÄ¸ßÎ»£¬¿¼ÂÇ½øÎ»
-    clr r1                       ; Çå³ı r1£¬ÒòÎª mul Ö¸Áî»áÊ¹ÓÃµ½Ëü
+    ; æ¢å¤ä¸‹ä¸€ä¸ªçº¿ç¨‹çš„æ ˆæŒ‡é’ˆ
+	lds r16, currentThread       ; åŠ è½½ currentThread çš„å€¼åˆ° r16
+    ldi r17, TLB_SIZE            ; åŠ è½½ TCB çš„å¤§å°åˆ° r17 (4 å­—èŠ‚)
+    mul r16, r17                 ; r0:r1 = r16 * r17 (ç»“æœåœ¨ r0:r1)
+    ldi r30, lo8(threadList)     ; åŠ è½½ threadList çš„ä½ä½åœ°å€åˆ° Z å¯„å­˜å™¨ (r30)
+    ldi r31, hi8(threadList)     ; åŠ è½½ threadList çš„é«˜ä½åœ°å€åˆ° Z å¯„å­˜å™¨ (r31)
+    add r30, r0                  ; å°†ä¹˜æ³•ç»“æœçš„ä½ä½åŠ åˆ° Z å¯„å­˜å™¨çš„ä½ä½
+    adc r31, r1                  ; å°†ä¹˜æ³•ç»“æœçš„é«˜ä½åŠ åˆ° Z å¯„å­˜å™¨çš„é«˜ä½ï¼Œè€ƒè™‘è¿›ä½
+    clr r1                       ; æ¸…é™¤ r1ï¼Œå› ä¸º mul æŒ‡ä»¤ä¼šä½¿ç”¨åˆ°å®ƒ
 	ld  r16, Z+
 	ld  r17, Z
     out SPL, r16
@@ -126,11 +126,12 @@ restore_next_thread:
 	pop r3 
 	pop r2 
 	pop r1 
-    ; ... »Ö¸´ÆäËû¼Ä´æÆ÷ ...
+    ; ... æ¢å¤å…¶ä»–å¯„å­˜å™¨ ...
     pop r0
     out SREG, r0
     pop r0
-    ; ... »Ö¸´ÆäËû¼Ä´æÆ÷ ...
+    ; ... æ¢å¤å…¶ä»–å¯„å­˜å™¨ ...
+
 	sei
 	ret
 
