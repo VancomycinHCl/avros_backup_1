@@ -30,7 +30,7 @@ typedef enum
 	TCB_STATUS_END							// 死亡（意味着可复用它的栈空间）
 } TCB_STATUS;
 
-typedef struct // 当前size 8字节
+typedef struct // 当前size 16字节
 {
 	uint8_t*	 tcb_stackPointer;			// 指向线程栈顶的指针
 	uint8_t*	 tcb_stack_bottom_Pointer;	// 指向线程栈底的指针 （留着备用）
@@ -43,7 +43,7 @@ typedef struct // 当前size 8字节
 	uint8_t		 tcb_reserved[5];			// 线程保留字段，用作填充或日后使用
 } TCB;
 
-#define MAX_THREADS 2
+#define MAX_THREADS 3
 #define THREAD_TIME_INTERVAL_1MS 1
 #define PERMNANT_BLOCKED_THREAD_CYC_CNT 0xFFFF 
 
@@ -68,8 +68,11 @@ typedef struct // 当前size 8字节
 extern int currentThread;
 extern TCB threadList[MAX_THREADS]; // 线程列表
 
-#define STACK_SIZE 512
+#define STACK_SIZE 			 512
 #define IDLE_TASK_STACK_SIZE 64
+#define IDLE_TASK_PID		 0x00
+#define IDLE_TASK_PRIORITY   0x00
+
 uint8_t thread_stack_idle[IDLE_TASK_STACK_SIZE];
 uint8_t thread_stack_0[STACK_SIZE];
 uint8_t thread_stack_1[STACK_SIZE];

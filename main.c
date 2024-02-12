@@ -67,10 +67,12 @@ int main() {
 	PORTB |= 0xC0;
 	PORTA |= 0xFF;
 	
-	setup_threads(&threadList[0],thread_stack_idle,&thread_idle,0);
-	setup_threads(&threadList[0],thread_stack_0,&thread0_main,1);
-	setup_threads(&threadList[1],thread_stack_1,&thread1_main,2);
+	setup_threads(&threadList[0],thread_stack_idle,&thread_idle,IDLE_TASK_PID,IDLE_TASK_PRIORITY,"Idle task");
+	setup_threads(&threadList[0],thread_stack_0,&thread0_main,1,0x01,"Task 1");
+	setup_threads(&threadList[1],thread_stack_1,&thread1_main,2,0x01,"Task 2");
 	startup_thread();
+
+	
 	// Main loop
 	while(1) 
 	{
