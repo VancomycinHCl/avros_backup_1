@@ -58,25 +58,29 @@ typedef struct // 当前size 16字节
 
 
 
-
+// define which schedulding strategy is configured
 #define THREAD_SCHEDULING_ROUND_ROBIN 0
 #define THREAD_SCHEDULING_PRIORITY    1
 
+// define thread stack initiation info 
 #define STACK_BOTTOM(STACK_PTR) STACK_PTR-STACK_SIZE 
 #define STACK_INIT_DATA 0x83
 
+// externed value, used for thread swap in both C code and AVR ASM code 
 extern int currentThread;
 extern TCB threadList[MAX_THREADS]; // 线程列表
 
+// idle task(system task when free)
 #define STACK_SIZE 			 512
 #define IDLE_TASK_STACK_SIZE 64
 #define IDLE_TASK_PID		 0x00
 #define IDLE_TASK_PRIORITY   0x00
 
-uint8_t thread_stack_idle[IDLE_TASK_STACK_SIZE];
-uint8_t thread_stack_0[STACK_SIZE];
-uint8_t thread_stack_1[STACK_SIZE];
-uint8_t thread_stack_2[STACK_SIZE];
+// Declare for user-defined stacks
+extern uint8_t thread_stack_idle[IDLE_TASK_STACK_SIZE];
+extern uint8_t thread_stack_0[STACK_SIZE];
+extern uint8_t thread_stack_1[STACK_SIZE];
+extern uint8_t thread_stack_2[STACK_SIZE];
 
 
 void setup_threads(TCB* tcb_ptr, 
@@ -96,9 +100,10 @@ void delay_thread_ms(int delay_interval_ms);
 void thread_delay_cyc_cnt_dec(void);
 void thread_idle(void);
 
-
+// 在不禁用中断的情况下，禁用线程调度，保护现场
 // need to complete
 // void suspend_threads_all(void);
 // void resume_threads_all(void);
+// void panic();
 
 #endif /* THREAD_H_ */

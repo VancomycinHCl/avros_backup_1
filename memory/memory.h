@@ -17,6 +17,24 @@
 #include <string.h>
 #include <assert.h>
 
+/*
+*   THIS IS THE HEAP MEMORY ALLOCATION MAP
+*   
+*   history_available_min_memory_size
+*   available_memory_size
+*   start_memory_block          	<- outside heap memory pool
+*   -------------------------	    <- heap_memory[GLOBAL_HEAP_SIZE]
+*   |block_memory_head  	|       <- inside heap memory pool
+*   |heap_unused_memory   	|
+*   |block_memory_head  	|
+*   |heap_used_memory   	|
+*   |       ......      	|
+*   |end_memory_block   	|
+*   -------------------------		<- end address of heap_memory[GLOBAL_HEAP_SIZE]
+*   
+*/
+
+
 /**
  * @brief 
  * 
@@ -24,7 +42,7 @@
 typedef struct BLOCK_MEMORY_HEAD
 {
 	block_memory_head* next_memory_block_ptr; 
-	unsigned int  size_memory_block;  // 16'h8000 -> size_memory_block[15] = 1 if allocated else 0
+	unsigned int  	   size_memory_block;  // 16'h8000 -> size_memory_block[15] = 1 if allocated else 0
 }block_memory_head;
 
 
@@ -65,6 +83,16 @@ typedef struct BLOCK_MEMORY_HEAD
 															BLOCK_MEMORY_ALLOCATED_MASK) )
 #define BLOCK_MEMORY_FREE(block_memory_head_ptr) ( ( (block_memory_head_ptr->size_memory_block) &= \
 															~BLOCK_MEMORY_ALLOCATED_MASK) )
+
+#define BLOCK_MEMORY_GET_AVAILABLE_SIZE(block_memory_head_ptr)   ( (block_memory_head_ptr->size_memory_block) & \
+																  (~(BLOCK_MEMORY_ALLOCATED_MASK)) )
+
+#define BLOCK_MEMORY_SET_AVAILABLE_SIZE(block_memory_head_ptr,block_length)    \
+(block_memory_head_ptr->size_memory_block = (block_memory_head_ptr->size_memory_block & BLOCK_MEMORY_ALLOCATED_MASK) | (block_length))
+
+
+
+#define GET_TOTAL_BLOCK_AND_HEAD_SIZE(block_length) block_length+SIZEOF_BLOCK_MEMORY_HEAD_WITH_ALIGNMENT
 
 
 /**																	

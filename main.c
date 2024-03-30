@@ -16,6 +16,12 @@
 #include <util/atomic.h>
 #include "user_func/user_func.h"
 
+// Declare for user-defined stacks
+uint8_t thread_stack_idle[IDLE_TASK_STACK_SIZE];
+uint8_t thread_stack_0[STACK_SIZE];
+uint8_t thread_stack_1[STACK_SIZE];
+uint8_t thread_stack_2[STACK_SIZE];
+
 // static int i = 0;
 
 // Timer configuration for ATMEL Mega 2560
