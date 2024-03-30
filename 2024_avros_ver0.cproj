@@ -183,9 +183,18 @@
   <avrgcc.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcc.assembler.debugging.DebugLevel>
 </AvrGcc>
     </ToolchainSettings>
+    <OutputFileName>lib2024_avros_ver0</OutputFileName>
+    <OutputFileExtension>.a</OutputFileExtension>
+    <OutputType>StaticLibrary</OutputType>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="main.c">
+    <Compile Include="avros.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="memory\memory.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="memory\memory.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="thread\delay_us.S">
@@ -211,8 +220,11 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="drivers\hal" />
     <Folder Include="user_func" />
     <Folder Include="thread" />
+    <Folder Include="memory" />
+    <Folder Include="drivers" />
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>

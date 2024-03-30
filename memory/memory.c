@@ -46,11 +46,42 @@ static block_memory_head*   end_memory_block_ptr;   // This is a pointer pointed
 *   -------------------------------------------------
 */
 
+static inline void merge_memory_block(block_memory_head* current_memory_block_ptr)
+{
+	// block_memory_head* next_block_after_merge_ptr = NULL;
+	size_t current_memory_block_size = 0;
+	current_memory_block_size = BLOCK_MEMORY_GET_AVAILABLE_SIZE(current_memory_block_ptr) + \
+	BLOCK_MEMORY_GET_AVAILABLE_SIZE(current_memory_block_ptr->next_memory_block_ptr) + \
+	SIZEOF_BLOCK_MEMORY_HEAD_WITH_ALIGNMENT;
+	BLOCK_MEMORY_SET_AVAILABLE_SIZE(current_memory_block_ptr,current_memory_block_size);
+	current_memory_block_ptr->next_memory_block_ptr = current_memory_block_ptr->next_memory_block_ptr->next_memory_block_ptr;
+	return;
+}
+
+// 负责把当前空存储块分割为前面的已用block，和后面的未用block
+static inline block_memory_head* split_memory_block(block_memory_head* current_memory_block_ptr,size_t block_length)
+{
+	block_memory_head* new_memory_block_ptr = NULL;
+	if (BLOCK_MEMORY_GET_AVAILABLE_SIZE(current_memory_block_ptr) < block_length)
+		return NULL;
+	if (current_memory_block_ptr == &start_memory_block)
+		new_memory_block_ptr = (block_memory_head*) ((uint8_t*)heap_memory + block_length);
+	else
+		new_memory_block_ptr     = (block_memory_head*) ((uint8_t*)current_memory_block_ptr + block_length + SIZEOF_BLOCK_MEMORY_HEAD_WITH_ALIGNMENT);
+	BLOCK_MEMORY_FREE(new_memory_block_ptr);
+	new_memory_block_ptr->next_memory_block_ptr = current_memory_block_ptr->next_memory_block_ptr;
+	new_memory_block_ptr->size_memory_block     = current_memory_block_ptr->size_memory_block - GET_TOTAL_BLOCK_AND_HEAD_SIZE(block_length);
+	BLOCK_MEMORY_ALLOCATE(current_memory_block_ptr);
+	BLOCK_MEMORY_SET_AVAILABLE_SIZE(current_memory_block_ptr,block_length);
+	current_memory_block_ptr->next_memory_block_ptr = new_memory_block_ptr;
+	return new_memory_block_ptr;
+}
+
 void init_memory_heap(void)
 {
     uint8_t* actual_heap_memory = NULL; 
     uint8_t* actual_heap_memory_end = NULL;
-    block_memory_head* first_memory_block_ptr_inheap = NULL;
+    // block_memory_head* first_memory_block_ptr_inheap = NULL;
     block_memory_head* end_memory_block_ptr_local = NULL;
 
 // 1. first(end,total-size) 2. end(null,0)
@@ -76,8 +107,8 @@ void init_memory_heap(void)
     history_available_min_memory_size = MIN(history_available_min_memory_size,available_memory_size);
     
 
-    end_memory_block_ptr_local = actual_heap_memory_end - \
-                                  SIZEOF_BLOCK_MEMORY_HEAD_WITH_ALIGNMENT;
+    end_memory_block_ptr_local = (block_memory_head*) (actual_heap_memory_end + 1 - \
+                                  SIZEOF_BLOCK_MEMORY_HEAD_WITH_ALIGNMENT);
     end_memory_block_ptr_local->next_memory_block_ptr = NULL;
     end_memory_block_ptr_local->size_memory_block     = 0;
     end_memory_block_ptr       = end_memory_block_ptr_local;
@@ -85,9 +116,9 @@ void init_memory_heap(void)
     start_memory_block.next_memory_block_ptr = end_memory_block_ptr;
     start_memory_block.size_memory_block     = available_memory_size;
 
-    first_memory_block_ptr_inheap = actual_heap_memory;
-    first_memory_block_ptr_inheap->next_memory_block_ptr = end_memory_block_ptr_local;
-    first_memory_block_ptr_inheap->size_memory_block     = available_memory_size;
+    //first_memory_block_ptr_inheap = (block_memory_head*) actual_heap_memory;
+    //first_memory_block_ptr_inheap->next_memory_block_ptr = end_memory_block_ptr_local;
+    //first_memory_block_ptr_inheap->size_memory_block     = available_memory_size;
 }
 
 
@@ -96,12 +127,12 @@ void* malloc_memory(size_t block_length)
     #if BYTES_ALIGNMENT_FOR_MCU == 1
     block_memory_head* current_memory_block_ptr = NULL;
     block_memory_head* last_memory_block_ptr    = NULL;
-    block_memory_head* new_memory_block_ptr     = NULL;
+    // block_memory_head* new_memory_block_ptr     = NULL;
     uint8_t*           return_memory_ptr        = NULL;
 
     // 这里差禁用线程切换
 
-    // Check whether the heap is initiaciated 
+    // Check whether the heap is initiated 
     // if (start_memory_block.next_memory_block_ptr != end_memory_block_ptr)
     //     init_memory_heap();
 
@@ -111,7 +142,7 @@ void* malloc_memory(size_t block_length)
         return NULL;
     }
     
-    // Check whether the required block length larger than the theortical maximum available heap size (2^14 Bytes)
+    // Check whether the required block length larger than the theoretical maximum available heap size (2^14 Bytes)
     if (block_length + SIZEOF_BLOCK_MEMORY_HEAD_WITH_ALIGNMENT > \
         ( (1<< (sizeof(unsigned int)*8-1-1) ) - SIZEOF_BLOCK_MEMORY_HEAD_WITH_ALIGNMENT))
     {
@@ -133,8 +164,11 @@ void* malloc_memory(size_t block_length)
         {
             if (BLOCK_MEMORY_GET_AVAILABLE_SIZE(current_memory_block_ptr) > GET_TOTAL_BLOCK_AND_HEAD_SIZE(block_length))
             {
-                // generate the return pointer value
-                return_memory_ptr = (uint8_t*) current_memory_block_ptr+SIZEOF_BLOCK_MEMORY_HEAD_WITH_ALIGNMENT;
+				// generate the return pointer value
+				if (current_memory_block_ptr == &start_memory_block)
+					return_memory_ptr = (uint8_t*) heap_memory;
+				else
+					return_memory_ptr = (uint8_t*) current_memory_block_ptr+SIZEOF_BLOCK_MEMORY_HEAD_WITH_ALIGNMENT;
                 // split the current block into the used memory and the rest of unused memory
                 if(!split_memory_block(current_memory_block_ptr,block_length))
                     return NULL;
@@ -166,27 +200,52 @@ void* malloc_memory(size_t block_length)
     return NULL;
 }
 
-// 负责把当前空存储块分割为前面的已用block，和后面的未用block
-inline block_memory_head* split_memory_block(block_memory_head* current_memory_block_ptr,size_t block_length)
-{
-    if (BLOCK_MEMORY_GET_AVAILABLE_SIZE(current_memory_block_ptr) < block_length)
-        return NULL;
-    block_memory_head* new_memory_block_ptr     = (block_memory_head*) ((uint8_t*)current_memory_block_ptr + block_length + SIZEOF_BLOCK_MEMORY_HEAD_WITH_ALIGNMENT);
-    BLOCK_MEMORY_FREE(new_memory_block_ptr);
-    new_memory_block_ptr->next_memory_block_ptr = current_memory_block_ptr->next_memory_block_ptr;
-    new_memory_block_ptr->size_memory_block     = current_memory_block_ptr->size_memory_block - GET_TOTAL_BLOCK_AND_HEAD_SIZE(block_length);
-    BLOCK_MEMORY_ALLOCATE(current_memory_block_ptr);
-    BLOCK_MEMORY_SET_AVAILABLE_SIZE(current_memory_block_ptr,block_length);
-    current_memory_block_ptr->next_memory_block_ptr = new_memory_block_ptr;
-    return new_memory_block_ptr;
-}
+
 
 void free_memory(void* ptr)
 {
+    // Check whether the pointer is valid
+    if (!ptr)
+        return;
     
+    // Declration of basic linklist variables
+    block_memory_head* current_memory_block_ptr = NULL;
+    block_memory_head* last_memory_block_ptr    = NULL;
+    block_memory_head* next_memory_block_ptr    = NULL;
+    block_memory_head* input_memory_block_ptr   = NULL;
+    input_memory_block_ptr = (block_memory_head*)  ((uint8_t*) ptr - SIZEOF_BLOCK_MEMORY_HEAD_WITH_ALIGNMENT);
+    current_memory_block_ptr = &start_memory_block;
+    next_memory_block_ptr    = input_memory_block_ptr->next_memory_block_ptr;
+
+    // Check whether the inputted pointer is the base address of the allocated block 
+    while (current_memory_block_ptr->next_memory_block_ptr != NULL)
+    {
+        if (current_memory_block_ptr == input_memory_block_ptr)
+            break;
+        last_memory_block_ptr    = current_memory_block_ptr; 
+        current_memory_block_ptr = current_memory_block_ptr->next_memory_block_ptr;
+    }
+
+    
+    // Merge memory pieces before and after the current freed memory block
+    if (current_memory_block_ptr == input_memory_block_ptr)
+    {
+        // 还差禁用线程切换
+        BLOCK_MEMORY_FREE(input_memory_block_ptr);
+        // 还差全局堆空间统计更新
+        if ( !IS_BLOCK_MEMORY_ALLOCATED(next_memory_block_ptr) && next_memory_block_ptr->next_memory_block_ptr != NULL)
+            merge_memory_block(current_memory_block_ptr);
+        if ( !IS_BLOCK_MEMORY_ALLOCATED(last_memory_block_ptr) )
+            merge_memory_block(last_memory_block_ptr);
+    }
+    // If the pointer is not the base address of memory pieces, return
+    else if(current_memory_block_ptr->next_memory_block_ptr == NULL)
+    {
+        return;
+    }
+    // 还差解禁线程切换
+    return;
 }
 
-inline void merge_memory_block()
-{
 
-}
+

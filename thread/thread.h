@@ -100,6 +100,8 @@ void delay_thread_ms(int delay_interval_ms);
 void thread_delay_cyc_cnt_dec(void);
 void thread_idle(void);
 
+TCB* get_thread_by_pid(int pid);
+
 // 在不禁用中断的情况下，禁用线程调度，保护现场
 // need to complete
 // void suspend_threads_all(void);

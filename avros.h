@@ -11,12 +11,20 @@
 #define AVROS_H_
 
 
-#include ".\thread\thread.h"
-#include ".\memory\memory.h"
+
 #include ".\user_func\user_func.h"
 
+#define USING_THREAD_SCHEDULDING 1
+#define USING_HEAP_MEMORY        1
 
 
+#if (USING_THREAD_SCHEDULDING != 0)
+#include ".\thread\thread.h"
+#endif
+
+#if (USING_HEAP_MEMORY != 0)
+#include ".\memory\memory.h"
+#endif
 
 
 

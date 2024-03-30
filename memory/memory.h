@@ -39,6 +39,9 @@
  * @brief 
  * 
  */
+
+typedef struct BLOCK_MEMORY_HEAD block_memory_head;
+
 typedef struct BLOCK_MEMORY_HEAD
 {
 	block_memory_head* next_memory_block_ptr; 
@@ -92,7 +95,7 @@ typedef struct BLOCK_MEMORY_HEAD
 
 
 
-#define GET_TOTAL_BLOCK_AND_HEAD_SIZE(block_length) block_length+SIZEOF_BLOCK_MEMORY_HEAD_WITH_ALIGNMENT
+#define GET_TOTAL_BLOCK_AND_HEAD_SIZE(block_length) (block_length+SIZEOF_BLOCK_MEMORY_HEAD_WITH_ALIGNMENT)
 
 
 /**																	
@@ -127,6 +130,7 @@ void* malloc_memory(size_t block_length);
 */
 void  free_memory(void* ptr);
 
-
+// block_memory_head* split_memory_block(block_memory_head* current_memory_block_ptr,size_t block_length);
+// void merge_memory_block(block_memory_head* current_memory_block_ptr);
 
 #endif
