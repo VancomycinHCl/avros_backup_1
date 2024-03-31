@@ -104,8 +104,8 @@ TCB* get_thread_by_pid(int pid);
 
 // 在不禁用中断的情况下，禁用线程调度，保护现场
 // need to complete
-// void suspend_threads_all(void);
-// void resume_threads_all(void);
-// void panic();
+void suspend_threads_all(void);
+void resume_threads_all(void);
+void panic();
 
 #endif /* THREAD_H_ */

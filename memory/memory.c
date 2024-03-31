@@ -137,7 +137,7 @@ void* malloc_memory(size_t block_length)
     //     init_memory_heap();
 
     // Check whether the block_length is 0
-    if (IS_BLOCK_MEMORY_SIZE_VALID(block_length) == 0)
+    if (block_length == 0)					// (IS_BLOCK_MEMORY_SIZE_VALID(block_length) == 0)
     {
         return NULL;
     }
@@ -213,7 +213,12 @@ void free_memory(void* ptr)
     block_memory_head* last_memory_block_ptr    = NULL;
     block_memory_head* next_memory_block_ptr    = NULL;
     block_memory_head* input_memory_block_ptr   = NULL;
-    input_memory_block_ptr = (block_memory_head*)  ((uint8_t*) ptr - SIZEOF_BLOCK_MEMORY_HEAD_WITH_ALIGNMENT);
+	#if BYTES_ALIGNMENT_FOR_MCU == 1
+	if (ptr == heap_memory)
+		input_memory_block_ptr = &start_memory_block;
+	else
+		input_memory_block_ptr = (block_memory_head*)  ((uint8_t*) ptr - SIZEOF_BLOCK_MEMORY_HEAD_WITH_ALIGNMENT);
+	#endif
     current_memory_block_ptr = &start_memory_block;
     next_memory_block_ptr    = input_memory_block_ptr->next_memory_block_ptr;
 
@@ -232,11 +237,18 @@ void free_memory(void* ptr)
     {
         // 还差禁用线程切换
         BLOCK_MEMORY_FREE(input_memory_block_ptr);
+        available_memory_size += BLOCK_MEMORY_GET_AVAILABLE_SIZE(current_memory_block_ptr);
         // 还差全局堆空间统计更新
         if ( !IS_BLOCK_MEMORY_ALLOCATED(next_memory_block_ptr) && next_memory_block_ptr->next_memory_block_ptr != NULL)
+        {
             merge_memory_block(current_memory_block_ptr);
-        if ( !IS_BLOCK_MEMORY_ALLOCATED(last_memory_block_ptr) )
+            available_memory_size += SIZEOF_BLOCK_MEMORY_HEAD_WITH_ALIGNMENT;
+        }
+        if ( !IS_BLOCK_MEMORY_ALLOCATED(last_memory_block_ptr) && last_memory_block_ptr != NULL)
+        {
             merge_memory_block(last_memory_block_ptr);
+            available_memory_size += SIZEOF_BLOCK_MEMORY_HEAD_WITH_ALIGNMENT;
+        }
     }
     // If the pointer is not the base address of memory pieces, return
     else if(current_memory_block_ptr->next_memory_block_ptr == NULL)

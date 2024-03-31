@@ -10,6 +10,8 @@
 
 // extern const uint8_t SIZEOF_TCB = sizeof(TCB);
 
+static uint8_t thread_all_suspend_level = 0;
+
 void setup_threads(TCB* tcb_ptr, uint8_t* stack_bottom_ptr,void* thread_function, int thread_pid, const uint8_t thread_priority, const char* thread_name_ptr)
 {
 	// 先封栈底，栈底（也就是空栈栈顶）是PC指针的位置，即线程函数的指针
@@ -69,7 +71,12 @@ extern void scheduling_thread(void)
 	uint8_t thread_highest_priority_list[MAX_THREADS] = {IDLE_TASK_PID};	// 最高优先级线程列表
 	uint8_t thread_highest_priority_cnt = 0;								// 最高优先级线程总数
 
+	if (thread_all_suspend_level != 0)
+	{
+		return;
+	}
 	
+
 	for (uint8_t thread_itr = 0; thread_itr < MAX_THREADS; thread_itr++)
 	{
 		current_thread_ptr = get_thread_by_pid(thread_itr);
@@ -290,3 +297,43 @@ void delay_thread_ms(int delay_interval_ms)
 	//sei();
 //}
 
+
+/**																	
+	* @brief		允许中断输入但是禁用线程调度
+	* @details	    全局变量thread_all_suspend_level自增，当thread_all_suspend_level不为0时，不会触发线程调度
+	* @par Changed log
+	* 		Build at 2024/03/31
+*/
+void suspend_threads_all(void)
+{
+	++thread_all_suspend_level;
+	return;
+}
+
+/**																	
+	* @brief		尝试解禁线程调度
+	* @details	    全局变量thread_all_suspend_level自增，当thread_all_suspend_level为0时，线程调度会如期执行
+	* @par Changed log
+	* 		Build at 2024/03/31
+	* @todo			看看FreeRTOS是怎么保证中断的同时禁用的，他们用了ready list机制
+*/
+void resume_threads_all(void)
+{
+	--thread_all_suspend_level;
+	return;
+}
+
+/**																	
+	* @brief		panic，严重错误回调函数
+	* @details	    一旦该函数执行，会禁用任何线程调度并且进入死循环，从而终止机器运转
+	* @par Changed log
+	* 		Build at 2024/03/31
+*/
+void panic()
+{
+	suspend_threads_all();
+	// 还需要做：向外打印出当前寄存器文件，与函数调用栈（可选）
+	cli();
+	while (1)
+	{}
+}
