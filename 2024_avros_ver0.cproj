@@ -197,6 +197,12 @@
     <Compile Include="memory\memory.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="queue\queue.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="queue\queue.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="thread\delay_us.S">
       <SubType>compile</SubType>
     </Compile>
@@ -221,6 +227,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="drivers\hal" />
+    <Folder Include="queue" />
     <Folder Include="user_func" />
     <Folder Include="thread" />
     <Folder Include="memory" />

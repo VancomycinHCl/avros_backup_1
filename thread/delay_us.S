@@ -6,7 +6,7 @@
  * Description: This function realises a delay function with a minimum time interval of precise 1us when the CPU freq is 16MHz . 
  * References: uint16_t delay_interval_us, at reg24 and 25
  * Note: Reference delay_interval_us should greater than 0, otherwise this function would delay 65535us because of the underflow of uint16_t.
- *       Reference delay_interval_us in a range of 1-999 is recommended, because this time delay would block thread timing
+ *       Reference delay_interval_us in a range of 1-999 is recommended, because delay longer than this time interval would block thread timing
  */ 
 
 .section .text

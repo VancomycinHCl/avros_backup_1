@@ -1,11 +1,12 @@
-
-/*
- * startup_thread.S
- *
- * Created: 19/01/2024 16.57.58
- *  Author: Adin
- */ 
-
+/**
+* @file        startup_thread.S
+* @brief		Thread startup function written in ASM language.
+* @details	    The basic step are: 1. Findout the thread stack context pointer from the current PID
+									2. Load the context pointer revover the context to register files.
+* @author		Xuanzhi Liu
+* @date		2024/01/02 19:49:02
+* @version	    v1.0
+*/
 
 .section .text
 .global startup_thread

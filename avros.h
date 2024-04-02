@@ -13,6 +13,7 @@
 
 
 #include ".\user_func\user_func.h"
+#include "stdbool.h"
 
 #define USING_THREAD_SCHEDULDING 1
 #define USING_HEAP_MEMORY        1
@@ -26,6 +27,11 @@
 #include ".\memory\memory.h"
 #endif
 
+#define BASE_RET uint8_t
 
+#ifdef BASE_RET
+#define RET_OK       0x00
+#define RET_ERROR    0xFF
+#endif
 
 #endif
