@@ -43,7 +43,9 @@ queue* queue_init(const uint16_t queue_depth, const uint8_t queue_element_size, 
     #endif
 }
 
-
+// 这个函数应该在临界区内被执行
+// 这个函数如果面对的是FIFO队列，那么就是先进先出，如果面对的是LIFO，那就是先进后出
+// 在Lifo的状态下，如果要压栈且压到限制的时候，会强制栈顶指针指向数组最后一个没有越界的地址
 int queue_push(queue* this_ptr, const void* data_in_ptr)
 {
     if(this_ptr->queue_is_FIFO_bool)
@@ -52,18 +54,28 @@ int queue_push(queue* this_ptr, const void* data_in_ptr)
         {
             this_ptr->queue_used_cnt++;
             memcpy(this_ptr->queue_tail_ptr, data_in_ptr, this_ptr->queue_element_size);
-            if (this_ptr->queue_tail_ptr + this_ptr->queue_element_size >= this_ptr->queue_array + this_ptr->queue_element_size * this_ptr->queue_element_size)
-            {
+            if (this_ptr->queue_tail_ptr + this_ptr->queue_element_size >= GET_QUEUE_ARRAY_END_PTR(this_ptr))
                 this_ptr->queue_tail_ptr = this_ptr->queue_array;
-            }
-            
+            else
+                this_ptr->queue_tail_ptr = this_ptr->queue_tail_ptr+this_ptr->queue_element_size;
         }
         else
             return -1;
-        
     }
+
     else
     {
-
+        if (!QUEUE_IS_FULL(this_ptr))
+        {
+            this_ptr->queue_used_cnt++;
+            memcpy(this_ptr->queue_tail_ptr, data_in_ptr, this_ptr->queue_element_size);
+            if (this_ptr->queue_tail_ptr + this_ptr->queue_element_size >= GET_QUEUE_ARRAY_END_PTR(this_ptr))
+                this_ptr->queue_tail_ptr = GET_QUEUE_ARRAY_END_PTR(this_ptr);
+            else
+                this_ptr->queue_tail_ptr = this_ptr->queue_tail_ptr+this_ptr->queue_element_size;
+        }
+        else
+            return -1;
     }
 }
+

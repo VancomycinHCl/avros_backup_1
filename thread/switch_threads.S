@@ -136,7 +136,8 @@ restore_next_thread:
 	ret
 
 
-/*thread_scheduling:
+/*
+thread_scheduling:
     lds r16, currentThread
     inc r16
     cpi r16, MAX_THREADS
@@ -146,4 +147,5 @@ restore_next_thread:
 	ret
 not_max:
     sts currentThread, r16
-	ret*/
+	ret
+*/

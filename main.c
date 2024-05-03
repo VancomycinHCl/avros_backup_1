@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <util/atomic.h>
 #include "user_func/user_func.h"
+#include "memory/memory.h"
 
 // Declare for user-defined stacks
 uint8_t thread_stack_idle[IDLE_TASK_STACK_SIZE];
@@ -73,6 +74,7 @@ int main() {
 	PORTB |= 0xC0;
 	PORTA |= 0xFF;
 	
+	init_memory_heap();
 	setup_threads(&threadList[0],thread_stack_idle,&thread_idle,IDLE_TASK_PID,IDLE_TASK_PRIORITY,"Idle task");
 	setup_threads(&threadList[0],thread_stack_0,&thread0_main,1,0x01,"Task 1");
 	setup_threads(&threadList[1],thread_stack_1,&thread1_main,2,0x01,"Task 2");

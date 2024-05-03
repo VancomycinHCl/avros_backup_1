@@ -30,7 +30,7 @@ typedef struct
     uint8_t             queue_element_size;          //< size of each elements in the queue
     uint16_t            queue_used_cnt;              //< how many elements in the current FIFO
     uint8_t*            queue_head_ptr;              //< head element ptr in fifo memory
-    uint8_t*            queue_tail_ptr;              //< tail element ptr in fifo memory
+    uint8_t*            queue_tail_ptr;              //< next free element block ptr in fifo memory
     bool                queue_is_FIFO_bool;          //< determine FIFO or LIFO
     LIST_THREAD*        queue_tx_threads_list;       //< TX thread linklist
     LIST_THREAD*        queue_rx_threads_list;       //< RX thread linklist
@@ -38,6 +38,7 @@ typedef struct
 
 
 #define QUEUE_IS_FULL(THIS_PTR) ( ((THIS_PTR)->queue_used_cnt) >= ((THIS_PTR)->queue_depth) )
+#define GET_QUEUE_ARRAY_END_PTR(THIS_PTR) ( (((THIS_PTR)->queue_array) + ((THIS_PTR)->queue_element_size * (THIS_PTR)->queue_element_size)) - 1 )
 
 // adsfasdfasdf
 /**																	
