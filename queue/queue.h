@@ -19,7 +19,7 @@
 #include "avros.h"
 
 
-
+// kjhgjkghjkhgjh
 typedef LIST LIST_THREAD;
 
 
@@ -39,7 +39,7 @@ typedef struct
 
 #define QUEUE_IS_FULL(THIS_PTR) ( ((THIS_PTR)->queue_used_cnt) >= ((THIS_PTR)->queue_depth) )
 
-
+// adsfasdfasdf
 /**																	
     * @brief		Construct a queue instance
     * @details	    A queue will be constructed in the heap memory. 
