@@ -42,3 +42,22 @@ queue* queue_init(const uint16_t queue_depth, const uint8_t queue_element_size, 
     #error "HEAP ALLOCATION UNIT IS MANDATORY IN THIS COMPILATION UNIT."
     #endif
 }
+
+
+int queue_push(queue* this_ptr, const void* data_in_ptr)
+{
+    if(this_ptr->queue_is_FIFO_bool)
+    {
+        if (!QUEUE_IS_FULL(this_ptr))
+        {
+            
+        }
+        else
+            return -1;
+        
+    }
+    else
+    {
+
+    }
+}

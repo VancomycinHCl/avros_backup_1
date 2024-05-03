@@ -29,12 +29,15 @@ typedef struct
     uint16_t            queue_depth;                 //< depth in fifo element
     uint8_t             queue_element_size;          //< size of each elements in the queue
     uint16_t            queue_used_cnt;              //< how many elements in the current FIFO
-    uint8_t**           queue_head_ptr;              //< head element ptr in fifo memory
-    uint8_t**           queue_tail_ptr;              //< tail element ptr in fifo memory
+    uint8_t*            queue_head_ptr;              //< head element ptr in fifo memory
+    uint8_t*            queue_tail_ptr;              //< tail element ptr in fifo memory
     bool                queue_is_FIFO_bool;          //< determine FIFO or LIFO
     LIST_THREAD*        queue_tx_threads_list;       //< TX thread linklist
     LIST_THREAD*        queue_rx_threads_list;       //< RX thread linklist
 }queue;
+
+
+#define QUEUE_IS_FULL(THIS_PTR) ( ((THIS_PTR)->queue_used_cnt) >= ((THIS_PTR)->queue_depth) )
 
 
 /**																	
@@ -50,7 +53,9 @@ typedef struct
     * @par Changed log
     * 		Build at 2024/04/03
 */
-queue* queue_init(const uint16_t queue_depth, const uint8_t queue_element_size, const bool queue_is_FIFO_bool);
+queue* queue_init(const uint16_t queue_depth, const uint8_t queue_element_size, const bool queue_is_FIFO_bool);\
+
+int queue_push(queue* this_ptr, const void* data_in_ptr);
 
 BASE_RET queue_deinit();
 
