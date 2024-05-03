@@ -50,6 +50,12 @@ int queue_push(queue* this_ptr, const void* data_in_ptr)
     {
         if (!QUEUE_IS_FULL(this_ptr))
         {
+            this_ptr->queue_used_cnt++;
+            memcpy(this_ptr->queue_tail_ptr, data_in_ptr, this_ptr->queue_element_size);
+            if (this_ptr->queue_tail_ptr + this_ptr->queue_element_size >= this_ptr->queue_array + this_ptr->queue_element_size * this_ptr->queue_element_size)
+            {
+                this_ptr->queue_tail_ptr = this_ptr->queue_array;
+            }
             
         }
         else
