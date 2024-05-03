@@ -1,7 +1,10 @@
 {
     "files.associations": {
+        "*.S": "avr",
         "thread.h": "c",
         "delay.h": "c",
-        "assert.h": "c"
+        "assert.h": "c",
+        "string.h": "c",
+        "memory.h": "c"
     }
 }
